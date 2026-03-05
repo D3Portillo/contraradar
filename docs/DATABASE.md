@@ -85,10 +85,6 @@ await redis.setex(cacheKey, 300, JSON.stringify(subscription));
 
 ## Webhooks
 
-### Clerk Webhook (`/api/webhooks/clerk`)
-- `user.created` - Creates new user record with free tier
-- `user.updated` - Updates user information
-
 ### PayPal Webhook (`/api/webhooks/paypal`)
 - `BILLING.SUBSCRIPTION.ACTIVATED` - Creates subscription record, updates user tier
 - `BILLING.SUBSCRIPTION.CANCELLED` - Updates status to cancelled

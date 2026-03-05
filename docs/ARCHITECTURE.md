@@ -70,10 +70,9 @@ contraradar is a SaaS platform built with Next.js 14+ using the App Router patte
 ### User Registration Flow
 ```
 1. User signs up via Clerk
-2. Clerk webhook triggers /api/webhooks/clerk
-3. Create user record in Supabase
-4. Set default subscription_tier = 'free'
-5. Redirect to /dashboard
+2. User record is upserted on first protected action (e.g. checkout)
+3. Set default subscription_tier = 'free'
+4. Redirect to /dashboard
 ```
 
 ### Subscription Flow
@@ -104,7 +103,7 @@ contraradar is a SaaS platform built with Next.js 14+ using the App Router patte
 ### Authentication
 - All protected routes use Clerk middleware
 - API routes validate Clerk session
-- Webhooks verify signatures (Clerk and PayPal)
+- PayPal webhooks verify signatures
 
 ### Authorization
 - Tier access checked based on subscription_tier
@@ -173,7 +172,6 @@ npm run start        # Start production server
 ## API Endpoints
 
 ### Public
-- `POST /api/webhooks/clerk` - Clerk webhook
 - `POST /api/webhooks/paypal` - PayPal webhook
 
 ### Protected (Requires Auth)

@@ -62,5 +62,4 @@ See `/docs/PAYPAL.md` for payment integration guide
 3. Test subscription flow end-to-end
 
 ## Webhooks
-- Clerk webhook: `/api/webhooks/clerk` - Syncs users to database
 - PayPal webhook: `/api/webhooks/paypal` - Handles subscription events

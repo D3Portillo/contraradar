@@ -36,9 +36,6 @@ npm install
    - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
    - `CLERK_SECRET_KEY`
 4. Configure sign-in/sign-up URLs in Clerk dashboard
-5. Create a webhook endpoint: `https://yourdomain.com/api/webhooks/clerk`
-   - Select `user.created` and `user.updated` events
-   - Copy webhook secret to `CLERK_WEBHOOK_SECRET`
 
 ### 5. Set Up PayPal
 1. Create a PayPal Developer account at https://developer.paypal.com/
@@ -84,7 +81,6 @@ SUPABASE_SECRET_KEY="sb_secret_..."
 # Clerk
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
 CLERK_SECRET_KEY="sk_test_..."
-CLERK_WEBHOOK_SECRET="whsec_..."
 
 # Upstash Redis
 UPSTASH_REDIS_REST_URL="https://..."
@@ -107,10 +103,9 @@ PAYPAL_PRO_YEARLY_PLAN_ID="P-..."
 - Ensure your IP is whitelisted in Supabase
 - Check if Supabase project is running
 
-### Clerk Webhook Issues
-- Verify webhook secret is correct
-- Check Clerk dashboard for webhook logs
-- Ensure webhook URL is publicly accessible (use ngrok for local testing)
+### Clerk Auth Issues
+- Verify Clerk keys are correct
+- Verify sign-in/sign-up URLs in Clerk dashboard
 
 ### PayPal Webhook Issues
 - Verify webhook URL is accessible
