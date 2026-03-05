@@ -41,12 +41,12 @@ contraradar is a SaaS platform built with Next.js 14+ using the App Router patte
 ### Backend (API Routes)
 - **Authentication**: Clerk middleware
 - **Validation**: Zod schemas
-- **Database**: Drizzle ORM
+- **Database**: Supabase client
 - **Caching**: Upstash Redis
 
 ### Database (Supabase)
 - **PostgreSQL**: Primary data store
-- **Drizzle ORM**: Type-safe queries
+- **Supabase JS**: Server-side queries
 - **Connection Pooling**: Via Supabase
 
 ### Authentication (Clerk)
@@ -90,14 +90,13 @@ contraradar is a SaaS platform built with Next.js 14+ using the App Router patte
 10. Redirect to /dashboard
 ```
 
-### Feature Access Flow
+### Tier Access Flow
 ```
-1. User accesses protected feature
+1. User accesses protected section
 2. Check Redis cache for subscription
 3. If not cached, query Supabase
-4. Check plan_features table
-5. Return access boolean
-6. Show content or upgrade modal
+4. Compare tier (free/lite/pro)
+5. Show content or upgrade modal
 ```
 
 ## Security
@@ -108,7 +107,7 @@ contraradar is a SaaS platform built with Next.js 14+ using the App Router patte
 - Webhooks verify signatures (Clerk and PayPal)
 
 ### Authorization
-- Feature access checked server-side
+- Tier access checked based on subscription_tier
 - Subscription status validated on each request
 - Redis cache prevents DB overload
 
@@ -129,7 +128,6 @@ contraradar is a SaaS platform built with Next.js 14+ using the App Router patte
 
 ### Caching Strategy
 - **Subscription Status**: 5 minutes
-- **Feature Flags**: 1 hour
 - **User Data**: Not cached (always fresh)
 
 ### Database Optimization
@@ -159,15 +157,11 @@ contraradar is a SaaS platform built with Next.js 14+ using the App Router patte
 ### Local Development
 ```bash
 npm run dev          # Start dev server
-npm run db:studio    # Open Drizzle Studio
 ```
 
 ### Database Management
 ```bash
-npm run db:generate  # Generate migrations
-npm run db:push      # Push to database
-npm run db:setup     # Create tables
-npm run db:seed      # Seed features
+# Run docs/sql/schema.sql once in Supabase SQL Editor
 ```
 
 ### Deployment
@@ -187,14 +181,14 @@ npm run start        # Start production server
 - `GET /api/subscription` - Get subscription status
 - `POST /api/subscription/cancel` - Cancel subscription
 - `GET /api/customer-portal` - Get customer portal URL
-- `GET /api/features/check` - Check feature access
 
 ## Environment Variables
 
 See `.env.local.example` for all required variables.
 
 ### Required for Development
-- `DATABASE_URL` - Supabase connection string
+- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
+- `SUPABASE_SECRET_KEY` - Supabase secret server key for backend queries
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk public key
 - `CLERK_SECRET_KEY` - Clerk secret key
 - `UPSTASH_REDIS_REST_URL` - Upstash Redis URL

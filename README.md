@@ -1,11 +1,11 @@
 # Contraradar
 
-Professional SaaS platform with subscription-based feature access.
+Professional SaaS platform with subscription tiers.
 
 ## Tech Stack
 
 - **Framework**: Next.js 14+ (App Router, TypeScript)
-- **Database**: Supabase (PostgreSQL) + Drizzle ORM
+- **Database**: Supabase
 - **Caching**: Upstash Redis
 - **Auth**: Clerk
 - **Payments**: PayPal Subscriptions
@@ -14,7 +14,6 @@ Professional SaaS platform with subscription-based feature access.
 ## Features
 
 - ✅ Subscription tiers (Free, Lite, Pro)
-- ✅ Feature access control
 - ✅ User authentication
 - ✅ Payment processing
 - ✅ Customer portal
@@ -38,9 +37,8 @@ npm install
 # Copy environment variables
 cp .env.local.example .env.local
 
-# Setup database
-npm run db:setup
-npm run db:seed
+# Setup database schema
+# Run docs/sql/schema.sql in Supabase SQL Editor
 
 # Start development server
 npm run dev
@@ -64,13 +62,6 @@ npm run build        # Build for production
 npm run start        # Start production server
 npm run lint         # Run ESLint
 npm run type-check   # Run TypeScript check
-
-# Database
-npm run db:setup     # Create database tables
-npm run db:seed      # Seed plan features
-npm run db:studio    # Open Drizzle Studio
-npm run db:generate  # Generate migrations
-npm run db:push      # Push schema to database
 ```
 
 ## Project Structure

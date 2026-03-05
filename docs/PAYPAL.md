@@ -109,12 +109,6 @@ After creating plans, copy the Plan IDs to `.env.local`:
 - `PAYPAL_PRO_MONTHLY_PLAN_ID`
 - `PAYPAL_PRO_YEARLY_PLAN_ID`
 
-Also add the public versions (safe to expose):
-- `NEXT_PUBLIC_PAYPAL_LITE_MONTHLY_PLAN_ID`
-- `NEXT_PUBLIC_PAYPAL_LITE_YEARLY_PLAN_ID`
-- `NEXT_PUBLIC_PAYPAL_PRO_MONTHLY_PLAN_ID`
-- `NEXT_PUBLIC_PAYPAL_PRO_YEARLY_PLAN_ID`
-
 ## Webhook Setup
 
 ### 1. Create Webhook
@@ -145,7 +139,7 @@ Handles:
 const res = await fetch('/api/checkout', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ planId: 'P-...' }),
+  body: JSON.stringify({ tier: 'pro', billingCycle: 'monthly' }),
 });
 
 const { approvalUrl } = await res.json();

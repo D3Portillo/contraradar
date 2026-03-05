@@ -1,7 +1,5 @@
 import 'server-only';
-import { db } from '@/lib/db';
-import { users, subscriptions } from '@/lib/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 import { redis } from '@/lib/redis/client';
 import type { SubscriptionTier } from '@/types';
 
@@ -11,32 +9,38 @@ export async function getUserSubscription(clerkId: string) {
   const cacheKey = `subscription:${clerkId}`;
 
   const cached = await redis.get(cacheKey);
-  if (cached) {
-    return cached as { tier: SubscriptionTier; status: string };
+  if (typeof cached === 'string') {
+    return JSON.parse(cached) as { tier: SubscriptionTier; status: string };
   }
 
-  const user = await db
-    .select()
-    .from(users)
-    .where(eq(users.clerkId, clerkId))
-    .limit(1);
+  const { data: user, error: userError } = await supabaseAdmin
+    .from('users')
+    .select('id, subscription_tier')
+    .eq('clerk_id', clerkId)
+    .maybeSingle();
 
-  if (!user[0]) {
+  if (userError) {
+    throw userError;
+  }
+
+  if (!user) {
     return { tier: 'free' as SubscriptionTier, status: 'inactive' };
   }
 
-  const subscription = await db
-    .select()
-    .from(subscriptions)
-    .where(and(
-      eq(subscriptions.userId, user[0].id),
-      eq(subscriptions.status, 'active')
-    ))
-    .limit(1);
+  const { data: subscription, error: subscriptionError } = await supabaseAdmin
+    .from('subscriptions')
+    .select('status')
+    .eq('user_id', user.id)
+    .eq('status', 'active')
+    .maybeSingle();
+
+  if (subscriptionError) {
+    throw subscriptionError;
+  }
 
   const result = {
-    tier: user[0].subscriptionTier as SubscriptionTier,
-    status: subscription[0]?.status || 'inactive',
+    tier: user.subscription_tier as SubscriptionTier,
+    status: subscription?.status || 'inactive',
   };
 
   await redis.setex(cacheKey, CACHE_TTL, JSON.stringify(result));
@@ -48,18 +52,26 @@ export async function updateUserSubscriptionTier(
   userId: string,
   tier: SubscriptionTier
 ) {
-  await db
-    .update(users)
-    .set({ subscriptionTier: tier, updatedAt: new Date() })
-    .where(eq(users.id, userId));
+  const { error: updateError } = await supabaseAdmin
+    .from('users')
+    .update({ subscription_tier: tier, updated_at: new Date().toISOString() })
+    .eq('id', userId);
 
-  const user = await db
-    .select({ clerkId: users.clerkId })
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1);
+  if (updateError) {
+    throw updateError;
+  }
 
-  if (user[0]) {
-    await redis.del(`subscription:${user[0].clerkId}`);
+  const { data: user, error: userError } = await supabaseAdmin
+    .from('users')
+    .select('clerk_id')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (userError) {
+    throw userError;
+  }
+
+  if (user?.clerk_id) {
+    await redis.del(`subscription:${user.clerk_id}`);
   }
 }

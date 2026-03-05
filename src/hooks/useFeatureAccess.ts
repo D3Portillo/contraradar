@@ -1,36 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
 import { useSubscription } from './useSubscription';
+import type { SubscriptionTier } from '@/types';
 
-export function useFeatureAccess(featureKey: string) {
-  const { tier, isPaid } = useSubscription();
+const TIER_RANK: Record<SubscriptionTier, number> = {
+  free: 0,
+  lite: 1,
+  pro: 2,
+};
 
-  const { data: hasAccess, isLoading } = useQuery({
-    queryKey: ['feature', featureKey, tier],
-    queryFn: async () => {
-      const res = await fetch(`/api/features/check?key=${featureKey}`);
-      const data = await res.json();
-      return data.hasAccess;
-    },
-    enabled: isPaid,
-  });
+export function useFeatureAccess(requiredTier: SubscriptionTier = 'free') {
+  const { tier } = useSubscription();
 
-  const simpleAccessCheck = () => {
-    const proFeatures = ['advanced_analytics', 'priority_support', 'custom_domains', 'api_access'];
-    const liteFeatures = ['limited_projects', 'basic_support'];
-
-    if (proFeatures.includes(featureKey)) {
-      return tier === 'pro';
-    }
-
-    if (liteFeatures.includes(featureKey)) {
-      return tier === 'lite' || tier === 'pro';
-    }
-
-    return true;
-  };
+  const hasAccess = TIER_RANK[tier] >= TIER_RANK[requiredTier];
 
   return {
-    hasAccess: isPaid ? hasAccess : simpleAccessCheck(),
-    isLoading,
+    hasAccess,
+    isLoading: false,
   };
 }

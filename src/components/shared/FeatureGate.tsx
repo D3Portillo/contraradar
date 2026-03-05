@@ -3,15 +3,16 @@
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { UpgradeModal } from "./UpgradeModal";
 import { useState } from "react";
+import type { SubscriptionTier } from "@/types";
 
 interface FeatureGateProps {
-  featureKey: string;
+  requiredTier?: SubscriptionTier;
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }
 
-export function FeatureGate({ featureKey, children, fallback }: FeatureGateProps) {
-  const { hasAccess } = useFeatureAccess(featureKey);
+export function FeatureGate({ requiredTier = "lite", children, fallback }: FeatureGateProps) {
+  const { hasAccess } = useFeatureAccess(requiredTier);
   const [showUpgrade, setShowUpgrade] = useState(false);
 
   if (hasAccess) {
@@ -43,7 +44,7 @@ export function FeatureGate({ featureKey, children, fallback }: FeatureGateProps
       <UpgradeModal
         isOpen={showUpgrade}
         onClose={() => setShowUpgrade(false)}
-        requiredPlan={featureKey.includes("pro") ? "Pro" : "Lite"}
+        requiredPlan={requiredTier === "pro" ? "Pro" : "Lite"}
       />
     </>
   );

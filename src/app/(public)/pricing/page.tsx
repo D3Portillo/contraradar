@@ -6,7 +6,7 @@ import { Footer } from "@/components/shared/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useClerk } from "@clerk/nextjs";
 
 const plans = [
   {
@@ -15,7 +15,6 @@ const plans = [
     monthlyPrice: 0,
     yearlyPrice: 0,
     features: ["Basic Dashboard", "Limited Access"],
-    planId: null,
   },
   {
     name: "Lite",
@@ -28,8 +27,6 @@ const plans = [
       "Basic Support",
       "Priority Updates",
     ],
-    monthlyPlanId: process.env.NEXT_PUBLIC_PAYPAL_LITE_MONTHLY_PLAN_ID,
-    yearlyPlanId: process.env.NEXT_PUBLIC_PAYPAL_LITE_YEARLY_PLAN_ID,
     highlighted: false,
   },
   {
@@ -45,8 +42,6 @@ const plans = [
       "Custom Domains",
       "API Access",
     ],
-    monthlyPlanId: process.env.NEXT_PUBLIC_PAYPAL_PRO_MONTHLY_PLAN_ID,
-    yearlyPlanId: process.env.NEXT_PUBLIC_PAYPAL_PRO_YEARLY_PLAN_ID,
     highlighted: true,
   },
 ];
@@ -54,11 +49,11 @@ const plans = [
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const { isSignedIn } = useUser();
-  const router = useRouter();
+  const { redirectToSignIn } = useClerk();
 
-  const handleCheckout = async (planId: string) => {
+  const handleCheckout = async (tier: "lite" | "pro") => {
     if (!isSignedIn) {
-      router.push("/sign-in");
+      redirectToSignIn();
       return;
     }
 
@@ -66,7 +61,7 @@ export default function PricingPage() {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId }),
+        body: JSON.stringify({ tier, billingCycle }),
       });
 
       const data = await res.json();
@@ -165,11 +160,7 @@ export default function PricingPage() {
                       className="w-full"
                       variant={plan.highlighted ? "default" : "outline"}
                       onClick={() =>
-                        handleCheckout(
-                          billingCycle === "monthly"
-                            ? plan.monthlyPlanId!
-                            : plan.yearlyPlanId!
-                        )
+                        handleCheckout(plan.tier === "lite" ? "lite" : "pro")
                       }
                     >
                       Choose {plan.name}

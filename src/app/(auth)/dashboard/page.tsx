@@ -35,7 +35,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <FeatureGate featureKey="advanced_analytics">
+        <FeatureGate requiredTier="pro">
           <Card>
             <CardHeader>
               <CardTitle className="text-sm font-medium">
@@ -73,7 +73,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <FeatureGate featureKey="priority_support">
+        <FeatureGate requiredTier="pro">
           <Card>
             <CardHeader>
               <CardTitle>Priority Support</CardTitle>

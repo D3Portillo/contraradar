@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { paypal } from '@/lib/paypal/client';
-import { db } from '@/lib/db';
-import { subscriptions, users } from '@/lib/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 import { redis } from '@/lib/redis/client';
 
 export async function POST() {
@@ -14,26 +12,32 @@ export async function POST() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const user = await db
-      .select()
-      .from(users)
-      .where(eq(users.clerkId, userId))
-      .limit(1);
+    const { data: user, error: userError } = await supabaseAdmin
+      .from('users')
+      .select('id')
+      .eq('clerk_id', userId)
+      .maybeSingle();
 
-    if (!user[0]) {
+    if (userError) {
+      throw userError;
+    }
+
+    if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const subscription = await db
-      .select()
-      .from(subscriptions)
-      .where(and(
-        eq(subscriptions.userId, user[0].id),
-        eq(subscriptions.status, 'active')
-      ))
-      .limit(1);
+    const { data: subscription, error: subscriptionError } = await supabaseAdmin
+      .from('subscriptions')
+      .select('id, paypal_subscription_id')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .maybeSingle();
 
-    if (!subscription[0]) {
+    if (subscriptionError) {
+      throw subscriptionError;
+    }
+
+    if (!subscription) {
       return NextResponse.json(
         { error: 'No active subscription found' },
         { status: 404 }
@@ -41,17 +45,21 @@ export async function POST() {
     }
 
     await paypal.cancelSubscription(
-      subscription[0].paypalSubscriptionId,
+      subscription.paypal_subscription_id,
       'User requested cancellation'
     );
 
-    await db
-      .update(subscriptions)
-      .set({
-        cancelAtPeriodEnd: true,
-        updatedAt: new Date(),
+    const { error: updateError } = await supabaseAdmin
+      .from('subscriptions')
+      .update({
+        cancel_at_period_end: true,
+        updated_at: new Date().toISOString(),
       })
-      .where(eq(subscriptions.id, subscription[0].id));
+      .eq('id', subscription.id);
+
+    if (updateError) {
+      throw updateError;
+    }
 
     await redis.del(`subscription:${userId}`);
 

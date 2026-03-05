@@ -18,9 +18,11 @@ npm install
 
 ### 2. Set Up Supabase
 1. Create a new Supabase project at https://supabase.com
-2. Go to Settings → Database → Connection string
-3. Copy the connection string (replace `[YOUR-PASSWORD]` with your database password)
-4. Add to `.env.local` as `DATABASE_URL`
+2. Copy Project URL from Settings → Data API
+3. Copy service role key from Settings → API Keys
+4. Add to `.env.local` as:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `SUPABASE_SECRET_KEY`
 
 ### 3. Set Up Upstash Redis
 1. Create a new Upstash Redis database at https://upstash.com
@@ -50,10 +52,6 @@ npm install
    - `PAYPAL_LITE_YEARLY_PLAN_ID`
    - `PAYPAL_PRO_MONTHLY_PLAN_ID`
    - `PAYPAL_PRO_YEARLY_PLAN_ID`
-   - `NEXT_PUBLIC_PAYPAL_LITE_MONTHLY_PLAN_ID`
-   - `NEXT_PUBLIC_PAYPAL_LITE_YEARLY_PLAN_ID`
-   - `NEXT_PUBLIC_PAYPAL_PRO_MONTHLY_PLAN_ID`
-   - `NEXT_PUBLIC_PAYPAL_PRO_YEARLY_PLAN_ID`
 6. Set up webhook: `https://yourdomain.com/api/webhooks/paypal`
    - Select subscription events (see `/docs/PAYPAL.md`)
 
@@ -63,15 +61,10 @@ cp .env.local.example .env.local
 # Edit .env.local with your credentials
 ```
 
-### 7. Run Setup Script
-```bash
-npm run setup
-```
-
-This will:
-- Install dependencies
-- Create database tables
-- Seed plan features
+### 7. Initialize Database Schema
+1. Open Supabase Dashboard → SQL Editor
+2. Open [docs/sql/schema.sql](docs/sql/schema.sql)
+3. Run the full script once
 
 ### 8. Start Development
 ```bash
@@ -85,14 +78,13 @@ Visit http://localhost:3000
 ### Required Variables
 ```bash
 # Database (Supabase)
-DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres"
+NEXT_PUBLIC_SUPABASE_URL="https://[YOUR-PROJECT-REF].supabase.co"
+SUPABASE_SECRET_KEY="sb_secret_..."
 
 # Clerk
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
 CLERK_SECRET_KEY="sk_test_..."
 CLERK_WEBHOOK_SECRET="whsec_..."
-NEXT_PUBLIC_CLERK_SIGN_IN_URL="/sign-in"
-NEXT_PUBLIC_CLERK_SIGN_UP_URL="/sign-up"
 
 # Upstash Redis
 UPSTASH_REDIS_REST_URL="https://..."
@@ -105,19 +97,13 @@ PAYPAL_LITE_MONTHLY_PLAN_ID="P-..."
 PAYPAL_LITE_YEARLY_PLAN_ID="P-..."
 PAYPAL_PRO_MONTHLY_PLAN_ID="P-..."
 PAYPAL_PRO_YEARLY_PLAN_ID="P-..."
-NEXT_PUBLIC_PAYPAL_LITE_MONTHLY_PLAN_ID="P-..."
-NEXT_PUBLIC_PAYPAL_LITE_YEARLY_PLAN_ID="P-..."
-NEXT_PUBLIC_PAYPAL_PRO_MONTHLY_PLAN_ID="P-..."
-NEXT_PUBLIC_PAYPAL_PRO_YEARLY_PLAN_ID="P-..."
-
-# App
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
 ## Troubleshooting
 
 ### Database Connection Issues
-- Verify DATABASE_URL is correct
+- Verify `NEXT_PUBLIC_SUPABASE_URL` is correct
+- Verify `SUPABASE_SECRET_KEY` is correct
 - Ensure your IP is whitelisted in Supabase
 - Check if Supabase project is running
 

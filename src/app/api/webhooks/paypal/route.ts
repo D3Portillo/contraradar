@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { users, subscriptions } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 import { updateUserSubscriptionTier } from '@/lib/utils/subscription';
 import { redis } from '@/lib/redis/client';
 import { paypal } from '@/lib/paypal/client';
@@ -10,7 +8,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
     const headers = req.headers;
-    
+
     const transmissionId = headers.get('paypal-transmission-id');
     const transmissionTime = headers.get('paypal-transmission-time');
     const certUrl = headers.get('paypal-cert-url');
@@ -36,75 +34,99 @@ export async function POST(req: NextRequest) {
 
       const subscriptionDetails = await paypal.getSubscription(subscriptionId);
       const planId = subscriptionDetails.plan_id;
-      
+
       const plan = planId.includes('pro') ? 'pro' : 'lite';
       const billingCycle = planId.includes('yearly') ? 'yearly' : 'monthly';
 
-      const user = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, customId))
-        .limit(1);
+      const { data: user, error: userError } = await supabaseAdmin
+        .from('users')
+        .select('id, clerk_id')
+        .eq('id', customId)
+        .maybeSingle();
 
-      if (!user[0]) {
+      if (userError) {
+        throw userError;
+      }
+
+      if (!user) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
       }
 
-      const existingSubscription = await db
-        .select()
-        .from(subscriptions)
-        .where(eq(subscriptions.paypalSubscriptionId, subscriptionId))
-        .limit(1);
+      const { data: existingSubscription, error: existingSubscriptionError } = await supabaseAdmin
+        .from('subscriptions')
+        .select('id')
+        .eq('paypal_subscription_id', subscriptionId)
+        .maybeSingle();
 
-      if (existingSubscription[0]) {
-        await db
-          .update(subscriptions)
-          .set({
+      if (existingSubscriptionError) {
+        throw existingSubscriptionError;
+      }
+
+      if (existingSubscription) {
+        const { error: updateError } = await supabaseAdmin
+          .from('subscriptions')
+          .update({
             status: 'active',
             plan,
-            billingCycle,
-            updatedAt: new Date(),
+            billing_cycle: billingCycle,
+            updated_at: new Date().toISOString(),
           })
-          .where(eq(subscriptions.id, existingSubscription[0].id));
+          .eq('id', existingSubscription.id);
+
+        if (updateError) {
+          throw updateError;
+        }
       } else {
-        await db.insert(subscriptions).values({
-          userId: customId,
-          paypalSubscriptionId: subscriptionId,
-          paypalPlanId: planId,
+        const { error: insertError } = await supabaseAdmin.from('subscriptions').insert({
+          user_id: customId,
+          paypal_subscription_id: subscriptionId,
+          paypal_plan_id: planId,
           status: 'active',
           plan,
-          billingCycle,
-          currentPeriodStart: new Date(),
+          billing_cycle: billingCycle,
+          current_period_start: new Date().toISOString(),
         });
+
+        if (insertError) {
+          throw insertError;
+        }
       }
 
       await updateUserSubscriptionTier(customId, plan);
-      await redis.del(`subscription:${user[0].clerkId}`);
+      await redis.del(`subscription:${user.clerk_id}`);
     }
 
     if (event_type === 'BILLING.SUBSCRIPTION.CANCELLED' || event_type === 'BILLING.SUBSCRIPTION.SUSPENDED') {
       const subscriptionId = resource.id;
       const customId = resource.custom_id;
 
-      await db
-        .update(subscriptions)
-        .set({
+      const { error: updateError } = await supabaseAdmin
+        .from('subscriptions')
+        .update({
           status: event_type.includes('CANCELLED') ? 'cancelled' : 'suspended',
-          updatedAt: new Date(),
+          updated_at: new Date().toISOString(),
         })
-        .where(eq(subscriptions.paypalSubscriptionId, subscriptionId));
+        .eq('paypal_subscription_id', subscriptionId);
+
+      if (updateError) {
+        throw updateError;
+      }
 
       if (customId) {
         await updateUserSubscriptionTier(customId, 'free');
-        
-        const user = await db
-          .select({ clerkId: users.clerkId })
-          .from(users)
-          .where(eq(users.id, customId))
-          .limit(1);
 
-        if (user[0]) {
-          await redis.del(`subscription:${user[0].clerkId}`);
+        const { data: user, error: userError } = await supabaseAdmin
+          .from('users')
+          .select('clerk_id')
+          .eq('id', customId)
+          .maybeSingle();
+
+        if (userError) {
+          throw userError;
+        }
+
+        if (user?.clerk_id) {
+          await redis.del(`subscription:${user.clerk_id}`);
         }
       }
     }
@@ -113,39 +135,51 @@ export async function POST(req: NextRequest) {
       const subscriptionId = resource.id;
       const customId = resource.custom_id;
 
-      await db
-        .update(subscriptions)
-        .set({
+      const { error: updateError } = await supabaseAdmin
+        .from('subscriptions')
+        .update({
           status: 'expired',
-          updatedAt: new Date(),
+          updated_at: new Date().toISOString(),
         })
-        .where(eq(subscriptions.paypalSubscriptionId, subscriptionId));
+        .eq('paypal_subscription_id', subscriptionId);
+
+      if (updateError) {
+        throw updateError;
+      }
 
       if (customId) {
         await updateUserSubscriptionTier(customId, 'free');
-        
-        const user = await db
-          .select({ clerkId: users.clerkId })
-          .from(users)
-          .where(eq(users.id, customId))
-          .limit(1);
 
-        if (user[0]) {
-          await redis.del(`subscription:${user[0].clerkId}`);
+        const { data: user, error: userError } = await supabaseAdmin
+          .from('users')
+          .select('clerk_id')
+          .eq('id', customId)
+          .maybeSingle();
+
+        if (userError) {
+          throw userError;
+        }
+
+        if (user?.clerk_id) {
+          await redis.del(`subscription:${user.clerk_id}`);
         }
       }
     }
 
     if (event_type === 'PAYMENT.SALE.COMPLETED') {
       const subscriptionId = resource.billing_agreement_id;
-      
-      await db
-        .update(subscriptions)
-        .set({
-          currentPeriodStart: new Date(),
-          updatedAt: new Date(),
+
+      const { error: updateError } = await supabaseAdmin
+        .from('subscriptions')
+        .update({
+          current_period_start: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         })
-        .where(eq(subscriptions.paypalSubscriptionId, subscriptionId));
+        .eq('paypal_subscription_id', subscriptionId);
+
+      if (updateError) {
+        throw updateError;
+      }
     }
 
     return NextResponse.json({ received: true });

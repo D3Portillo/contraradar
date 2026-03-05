@@ -16,7 +16,7 @@ async function getAccessToken(): Promise<string> {
   }
 
   const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`).toString('base64');
-  
+
   const res = await fetch(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
     method: 'POST',
     headers: {
@@ -33,7 +33,7 @@ async function getAccessToken(): Promise<string> {
   }
 
   const data = await res.json();
-  
+
   cachedAccessToken = {
     token: data.access_token,
     expiresAt: Date.now() + (data.expires_in - 60) * 1000,
@@ -44,7 +44,7 @@ async function getAccessToken(): Promise<string> {
 
 export async function paypalFetch(endpoint: string, options: RequestInit = {}) {
   const accessToken = await getAccessToken();
-  
+
   const res = await fetch(`${PAYPAL_API_BASE}${endpoint}`, {
     ...options,
     headers: {
@@ -99,6 +99,8 @@ export const paypal = {
 
   async createSubscription(data: {
     planId: string;
+    returnUrl: string;
+    cancelUrl: string;
     subscriber?: {
       name?: { given_name: string; surname: string };
       email_address: string;
@@ -111,12 +113,13 @@ export const paypal = {
         brand_name: 'Contraradar',
         locale: 'en-US',
         user_action: 'SUBSCRIBE_NOW',
+        shipping_preference: 'NO_SHIPPING',
         payment_method: {
           payer_selected: 'PAYPAL',
           payee_preferred: 'IMMEDIATE_PAYMENT_REQUIRED',
         },
-        return_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing?success=true`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing?cancelled=true`,
+        return_url: data.returnUrl,
+        cancel_url: data.cancelUrl,
       },
     };
 

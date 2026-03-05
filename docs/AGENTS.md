@@ -5,7 +5,7 @@ contraradar - Framer-like SaaS platform with subscription tiers (Lite/Pro)
 
 ## Tech Stack
 - Next.js 14+ (App Router, TypeScript)
-- Drizzle ORM + Supabase (PostgreSQL)
+- Supabase
 - Upstash Redis
 - Clerk (Authentication)
 - PayPal (Subscriptions)
@@ -23,18 +23,7 @@ npm run type-check       # Run TypeScript check
 ```
 
 ### Database
-```bash
-npm run db:generate      # Generate Drizzle migrations
-npm run db:push          # Push schema to database
-npm run db:setup         # Create database tables
-npm run db:seed          # Seed plan features
-npm run db:studio        # Open Drizzle Studio
-```
-
-### Setup
-```bash
-npm run setup            # Full development setup
-```
+- Run `docs/sql/schema.sql` in Supabase SQL Editor to create tables and seed features
 
 ## Environment Variables
 Required environment variables are listed in `.env.local.example`
@@ -43,17 +32,10 @@ Required environment variables are listed in `.env.local.example`
 - `/src/app/(public)` - Public pages (landing, pricing, legal)
 - `/src/app/(auth)` - Protected pages (dashboard, settings)
 - `/src/app/api` - API routes
-- `/src/lib/db` - Database schema and client
+- `/src/lib/supabase` - Supabase server clients
 - `/src/lib/redis` - Upstash Redis client
 - `/src/lib/paypal` - Payment integration
 - `/src/components` - React components
-
-## Feature Access Control
-Use `useFeatureAccess` hook to check if user has access to a feature:
-```typescript
-const { hasAccess } = useFeatureAccess('advanced_analytics');
-if (!hasAccess) return <UpgradeModal />;
-```
 
 ## Subscription Tiers
 - **Free**: Basic dashboard only

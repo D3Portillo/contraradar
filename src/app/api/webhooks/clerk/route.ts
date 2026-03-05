@@ -1,9 +1,7 @@
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { users } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
@@ -50,13 +48,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing email' }, { status: 400 });
     }
 
-    await db.insert(users).values({
-      clerkId: id,
+    const { error } = await supabaseAdmin.from('users').upsert({
+      clerk_id: id,
       email,
-      fullName: `${first_name || ''} ${last_name || ''}`.trim(),
-      avatarUrl: image_url,
-      subscriptionTier: 'free',
-    });
+      full_name: `${first_name || ''} ${last_name || ''}`.trim(),
+      avatar_url: image_url,
+      subscription_tier: 'free',
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'clerk_id' });
+
+    if (error) {
+      throw error;
+    }
   }
 
   if (eventType === 'user.updated') {
@@ -68,15 +71,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing email' }, { status: 400 });
     }
 
-    await db
-      .update(users)
-      .set({
+    const { error } = await supabaseAdmin
+      .from('users')
+      .update({
         email,
-        fullName: `${first_name || ''} ${last_name || ''}`.trim(),
-        avatarUrl: image_url,
-        updatedAt: new Date(),
+        full_name: `${first_name || ''} ${last_name || ''}`.trim(),
+        avatar_url: image_url,
+        updated_at: new Date().toISOString(),
       })
-      .where(eq(users.clerkId, id));
+      .eq('clerk_id', id);
+
+    if (error) {
+      throw error;
+    }
   }
 
   return NextResponse.json({ received: true });
