@@ -113,12 +113,12 @@ export default function PricingPage() {
               <Card
                 key={plan.tier}
                 className={`relative ${
-                  plan.highlighted ? "border-purple-500 shadow-lg" : ""
+                  plan.highlighted ? "border-primary shadow-lg" : ""
                 }`}
               >
                 {plan.highlighted && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-purple-500 text-white text-xs px-3 py-1 rounded-full">
+                    <span className="bg-primary text-primary-foreground text-xs px-3 py-1 rounded-full">
                       Most Popular
                     </span>
                   </div>
@@ -146,7 +146,7 @@ export default function PricingPage() {
                         key={feature}
                         className="flex items-start gap-2 text-sm"
                       >
-                        <span className="text-green-500 mt-1">✓</span>
+                        <span className="text-primary mt-1">✓</span>
                         {feature}
                       </li>
                     ))}

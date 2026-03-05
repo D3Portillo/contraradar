@@ -35,7 +35,7 @@ export function FeatureGate({ requiredTier = "lite", children, fallback }: Featu
         <div className="absolute inset-0 flex items-center justify-center bg-background/50">
           <button
             onClick={() => setShowUpgrade(true)}
-            className="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium"
           >
             Upgrade to Unlock
           </button>

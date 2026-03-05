@@ -1,38 +1,44 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { ClerkProvider } from '@clerk/nextjs';
-import { QueryProvider } from "@/components/QueryProvider";
-import "./globals.css";
+import "./globals.css"
+import type { Metadata } from "next"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import { ClerkProvider } from "@clerk/nextjs"
+import { QueryProvider } from "@/components/QueryProvider"
+import { Inter, JetBrains_Mono } from "next/font/google"
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const fontSans = Inter({
   subsets: ["latin"],
-});
+  variable: "--font-sans",
+})
+
+const fontSerif = Inter({
+  subsets: ["latin"],
+  variable: "--font-serif",
+})
+
+const fontMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+})
 
 export const metadata: Metadata = {
   title: "Contraradar - Build Better",
   description: "Professional SaaS platform with powerful features",
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} antialiased`}
         >
           <QueryProvider>{children}</QueryProvider>
         </body>
       </html>
     </ClerkProvider>
-  );
+  )
 }

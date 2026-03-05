@@ -6,9 +6,9 @@ interface PlanBadgeProps {
 }
 
 const planColors: Record<SubscriptionTier, string> = {
-  free: "bg-gray-500",
-  lite: "bg-blue-500",
-  pro: "bg-purple-500",
+  free: "bg-muted text-muted-foreground border-border",
+  lite: "bg-secondary text-secondary-foreground",
+  pro: "bg-primary text-primary-foreground",
 };
 
 const planLabels: Record<SubscriptionTier, string> = {
@@ -19,7 +19,7 @@ const planLabels: Record<SubscriptionTier, string> = {
 
 export function PlanBadge({ tier }: PlanBadgeProps) {
   return (
-    <Badge className={`${planColors[tier]} text-white`}>
+    <Badge className={planColors[tier]}>
       {planLabels[tier]}
     </Badge>
   );
