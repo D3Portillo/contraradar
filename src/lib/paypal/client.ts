@@ -2,8 +2,8 @@ const isSandBox = true //process.env.NODE_ENV !== 'production';
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID
 const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET
 const PAYPAL_API_BASE = isSandBox
-  ? "https://api-m.paypal.com"
-  : "https://api-m.sandbox.paypal.com"
+  ? "https://api-m.sandbox.paypal.com"
+  : "https://api-m.paypal.com"
 
 if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
   throw new Error("PayPal environment variables are not set")
