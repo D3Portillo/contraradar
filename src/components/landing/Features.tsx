@@ -1,35 +1,50 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  BarChart2,
+  TrendingUp,
+  Crosshair,
+  Users,
+  Zap,
+  Search,
+} from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
-const features = [
+const features: { title: string; description: string; Icon: LucideIcon }[] = [
   {
-    title: "Powerful Dashboard",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    icon: "📊",
+    title: "Skill Demand Trends",
+    description:
+      "Discover which skills are driving the most projects and revenue on Contra right now.",
+    Icon: BarChart2,
   },
   {
-    title: "Team Collaboration",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    icon: "👥",
+    title: "Rate Benchmarks",
+    description:
+      "See what top-performing experts charge and calibrate your rates to win more clients.",
+    Icon: TrendingUp,
   },
   {
-    title: "Advanced Analytics",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    icon: "📈",
+    title: "Niche Discovery",
+    description:
+      "Identify underserved niches with high client demand and low expert competition.",
+    Icon: Crosshair,
   },
   {
-    title: "API Access",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    icon: "🔌",
+    title: "Expert Rankings",
+    description:
+      "Track which experts are landing the most contracts and learn what sets them apart.",
+    Icon: Users,
   },
   {
-    title: "Custom Domains",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    icon: "🌐",
+    title: "Opportunity Alerts",
+    description:
+      "Get notified the moment demand spikes for your skills or services on Contra.",
+    Icon: Zap,
   },
   {
-    title: "Priority Support",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    icon: "💬",
+    title: "Client Intent",
+    description:
+      "Understand exactly what clients are searching for before you write your next pitch.",
+    Icon: Search,
   },
 ]
 
@@ -38,17 +53,19 @@ export function Features() {
     <section className="py-16 border-t mt-44 px-4">
       <div className="container mx-auto">
         <h2 className="text-xl uppercase font-bold text-center mb-12">
-          Everything You Need
+          Built for Contra Experts
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature) => (
-            <Card key={feature.title}>
+          {features.map(({ title, description, Icon }) => (
+            <Card key={title}>
               <CardHeader>
-                <div className="text-4xl mb-2">{feature.icon}</div>
-                <CardTitle>{feature.title}</CardTitle>
+                <div className="mb-2">
+                  <Icon className="w-8 h-8 text-primary" />
+                </div>
+                <CardTitle>{title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">{feature.description}</p>
+                <p className="text-muted-foreground">{description}</p>
               </CardContent>
             </Card>
           ))}
