@@ -31,7 +31,13 @@ export function Sidebar() {
           <h2 className="text-xl font-bold">RADAR</h2>
         </nav>
         <div className="mt-2">
-          <PlanBadge tier={tier} />
+          <Link
+            href="/dashboard/billing"
+            className="cursor-pointer"
+            title="Manage your billing plan"
+          >
+            <PlanBadge tier={tier} />
+          </Link>
         </div>
       </div>
 
