@@ -15,7 +15,8 @@ const baseFont = Inter({
 
 export const metadata: Metadata = {
   title: "Radar — market intelligence for Contra experts.",
-  description: "Professional SaaS platform with powerful features",
+  description:
+    "Discover in-demand skills, benchmark your rates, and find high-opportunity niches on Contra.",
 }
 
 export default function RootLayout({
