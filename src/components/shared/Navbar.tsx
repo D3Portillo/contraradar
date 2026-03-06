@@ -18,7 +18,10 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center gap-6">
-          <Link href="/pricing" className="text-sm hover:underline">
+          <Link
+            href="/pricing"
+            className="hidden sm:inline text-sm hover:underline"
+          >
             Pricing
           </Link>
 

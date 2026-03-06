@@ -1,12 +1,12 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Navbar } from "@/components/shared/Navbar";
-import { Footer } from "@/components/shared/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useUser } from "@clerk/nextjs";
-import { useClerk } from "@clerk/nextjs";
+import { useState } from "react"
+import { Navbar } from "@/components/shared/Navbar"
+import { Footer } from "@/components/shared/Footer"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { useUser } from "@clerk/nextjs"
+import { useClerk } from "@clerk/nextjs"
 
 const plans = [
   {
@@ -44,17 +44,19 @@ const plans = [
     ],
     highlighted: true,
   },
-];
+]
 
 export default function PricingPage() {
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-  const { isSignedIn } = useUser();
-  const { redirectToSignIn } = useClerk();
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
+    "monthly",
+  )
+  const { isSignedIn } = useUser()
+  const { redirectToSignIn } = useClerk()
 
   const handleCheckout = async (tier: "lite" | "pro") => {
     if (!isSignedIn) {
-      redirectToSignIn();
-      return;
+      redirectToSignIn()
+      return
     }
 
     try {
@@ -62,45 +64,43 @@ export default function PricingPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tier, billingCycle }),
-      });
+      })
 
-      const data = await res.json();
+      const data = await res.json()
       if (data.approvalUrl) {
-        window.location.href = data.approvalUrl;
+        window.location.href = data.approvalUrl
       }
     } catch (error) {
-      console.error("Checkout error:", error);
+      console.error("Checkout error:", error)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen">
       <Navbar />
-      <main className="pt-24 pb-16 px-4">
+      <main className="pt-40 pb-16 px-4">
         <div className="container mx-auto max-w-6xl">
-          <h1 className="text-4xl font-bold text-center mb-4">Pricing</h1>
-          <p className="text-center text-muted-foreground mb-8">
-            Choose the plan that fits your needs
+          <h1 className="text-4xl font-bold text-center mb-2">
+            Pick your package
+          </h1>
+          <p className="text-center text-muted-foreground mb-12">
+            Unlock the data behind expert demand.
           </p>
 
           <div className="flex justify-center mb-8">
-            <div className="inline-flex rounded-lg border p-1">
+            <div className="inline-flex p-1 border border-black/20 rounded-full overflow-hidden">
               <button
                 onClick={() => setBillingCycle("monthly")}
-                className={`px-4 py-2 rounded-md text-sm font-medium ${
-                  billingCycle === "monthly"
-                    ? "bg-primary text-primary-foreground"
-                    : ""
+                className={`px-4 py-2 rounded-full text-sm ${
+                  billingCycle === "monthly" ? "bg-primary text-white" : ""
                 }`}
               >
                 Monthly
               </button>
               <button
                 onClick={() => setBillingCycle("yearly")}
-                className={`px-4 py-2 rounded-md text-sm font-medium ${
-                  billingCycle === "yearly"
-                    ? "bg-primary text-primary-foreground"
-                    : ""
+                className={`px-4 py-2 rounded-full text-sm ${
+                  billingCycle === "yearly" ? "bg-primary text-white" : ""
                 }`}
               >
                 Yearly (2 months free)
@@ -139,7 +139,7 @@ export default function PricingPage() {
                     )}
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="grow flex flex-col">
                   <ul className="space-y-3 mb-6">
                     {plan.features.map((feature) => (
                       <li
@@ -151,6 +151,9 @@ export default function PricingPage() {
                       </li>
                     ))}
                   </ul>
+
+                  <div className="grow" />
+
                   {plan.tier === "free" ? (
                     <Button className="w-full" variant="outline">
                       Current Plan
@@ -174,5 +177,5 @@ export default function PricingPage() {
       </main>
       <Footer />
     </div>
-  );
+  )
 }

@@ -25,7 +25,7 @@ export function Sidebar() {
         </div>
       </div>
 
-      <nav className="space-y-2">
+      <nav>
         {navigation.map((item) => (
           <Link
             key={item.name}

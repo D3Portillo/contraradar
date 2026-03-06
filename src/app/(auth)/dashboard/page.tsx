@@ -1,25 +1,28 @@
-"use client";
+"use client"
 
-import { useSubscription } from "@/hooks/useSubscription";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FeatureGate } from "@/components/shared/FeatureGate";
+import { useSubscription } from "@/hooks/useSubscription"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { FeatureGate } from "@/components/shared/FeatureGate"
+import { useUser } from "@/hooks/useUser"
 
 export default function DashboardPage() {
-  const { tier, isPaid } = useSubscription();
+  const { user } = useUser()
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold">Dashboard</h2>
         <p className="text-muted-foreground">
-          Welcome back! Here&apos;s your overview.
+          Welcome back {user?.firstName ? user.firstName : "to your dashboard"}!
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Projects
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">3</div>
@@ -90,5 +93,5 @@ export default function DashboardPage() {
         </FeatureGate>
       </div>
     </div>
-  );
+  )
 }
