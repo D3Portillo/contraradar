@@ -1,15 +1,17 @@
 import Link from "next/link";
+import Image from "next/image";
+
+import asset_logo from "@/assets/logo.svg";
 
 export function Footer() {
   return (
-    <footer className="border-t py-8 mt-16">
+    <footer className="border-t py-16 mt-16">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="font-bold mb-4">Contraradar</h3>
-            <p className="text-sm text-muted-foreground">
-              Build better products with powerful tools.
-            </p>
+            <Link href="/" className="inline-block w-32 mb-4 focus:outline-2 focus:outline-offset-2 focus:outline-ring">
+              <Image className="w-full" alt="Contraradar" src={asset_logo} />
+            </Link>
           </div>
 
           <div>
@@ -23,27 +25,6 @@ export function Footer() {
               <li>
                 <Link href="#" className="hover:underline">
                   Features
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/terms" className="hover:underline">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="hover:underline">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/refund" className="hover:underline">
-                  Refund Policy
                 </Link>
               </li>
             </ul>
@@ -66,7 +47,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
+        <div className="border-t mt-32 pt-16 text-center text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Contraradar. All rights reserved.</p>
         </div>
       </div>
