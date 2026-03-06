@@ -105,20 +105,21 @@ void main() {
         circleSize,
         circleEdge
     );
+    float safeEdge = max(sdfCircle, 0.001);
 
     float sdf;
     if (VAR == 0) {
         sdf = sdRoundRect(st, vec2(size), roundness);
-        sdf = strokeAA(sdf, 0.0, borderSize, sdfCircle) * 4.0;
+        sdf = strokeAA(sdf, 0.0, borderSize, safeEdge) * 4.0;
     } else if (VAR == 1) {
         sdf = sdCircle(st, vec2(0.5));
-        sdf = fill(sdf, 0.6, sdfCircle) * 1.2;
+        sdf = fill(sdf, 0.6, safeEdge) * 1.2;
     } else if (VAR == 2) {
         sdf = sdCircle(st, vec2(0.5));
-        sdf = strokeAA(sdf, 0.58, 0.02, sdfCircle) * 4.0;
+        sdf = strokeAA(sdf, 0.58, 0.02, safeEdge) * 4.0;
     } else if (VAR == 3) {
         sdf = sdPoly(st - vec2(0.5, 0.45), 0.3, 3);
-        sdf = fill(sdf, 0.05, sdfCircle) * 1.4;
+        sdf = fill(sdf, 0.05, safeEdge) * 1.4;
     }
 
     float alpha = sdf;
@@ -169,7 +170,10 @@ const ShapeBlur: FC<ShapeBlurProps> = ({
     const camera = new THREE.OrthographicCamera()
     camera.position.z = 1
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true })
+    const renderer = new THREE.WebGLRenderer({
+      alpha: true,
+      premultipliedAlpha: false,
+    })
     renderer.setClearColor(0x000000, 0)
     renderer.setPixelRatio(1)
     mount.appendChild(renderer.domElement)
