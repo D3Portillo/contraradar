@@ -8,9 +8,11 @@ interface UpgradeModalProps {
   isOpen: boolean;
   onClose: () => void;
   requiredPlan?: string;
+  /** When provided, replaces the /pricing link with a demo unlock action. */
+  onViewPlans?: () => void;
 }
 
-export function UpgradeModal({ isOpen, onClose, requiredPlan }: UpgradeModalProps) {
+export function UpgradeModal({ isOpen, onClose, requiredPlan, onViewPlans }: UpgradeModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -22,9 +24,19 @@ export function UpgradeModal({ isOpen, onClose, requiredPlan }: UpgradeModalProp
             This feature requires a {requiredPlan || "paid"} plan. Upgrade now to unlock all features.
           </p>
           <div className="flex gap-2">
-            <Link href="/pricing">
-              <Button className="flex-1">View Plans</Button>
-            </Link>
+            {onViewPlans ? (
+              <Button
+                className="flex-1"
+                onClick={onViewPlans}
+                aria-label="Preview pro features without upgrading"
+              >
+                Preview Pro Features
+              </Button>
+            ) : (
+              <Link href="/pricing">
+                <Button className="flex-1">View Plans</Button>
+              </Link>
+            )}
             <Button variant="outline" onClick={onClose}>
               Maybe Later
             </Button>

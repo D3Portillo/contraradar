@@ -14,8 +14,9 @@ interface FeatureGateProps {
 export function FeatureGate({ requiredTier = "lite", children, fallback }: FeatureGateProps) {
   const { hasAccess } = useFeatureAccess(requiredTier);
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [isDemoUnlocked, setIsDemoUnlocked] = useState(false);
 
-  if (hasAccess) {
+  if (hasAccess || isDemoUnlocked) {
     return <>{children}</>;
   }
 
@@ -45,6 +46,10 @@ export function FeatureGate({ requiredTier = "lite", children, fallback }: Featu
         isOpen={showUpgrade}
         onClose={() => setShowUpgrade(false)}
         requiredPlan={requiredTier === "pro" ? "Pro" : "Lite"}
+        onViewPlans={() => {
+          setShowUpgrade(false);
+          setIsDemoUnlocked(true);
+        }}
       />
     </>
   );

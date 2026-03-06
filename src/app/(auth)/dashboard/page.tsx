@@ -6,98 +6,146 @@ import {
   ArrowDownRight,
   Minus,
   TrendingUp,
-  Zap,
   Target,
   BarChart2,
-  Clock,
-  Briefcase,
-  Code2,
+  Users,
+  Zap,
+  Layers,
   Palette,
-  PenTool,
-  Globe,
-  Database,
+  Code2,
+  BookOpen,
+  Sparkles,
+  Clock,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { FeatureGate } from "@/components/shared/FeatureGate"
 import { useUser } from "@/hooks/useUser"
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type Trend = "up" | "down" | "neutral"
+
+// ─── Stats ────────────────────────────────────────────────────────────────────
+
 const STATS = [
   {
-    label: "Skills Tracked",
-    value: "247",
-    change: "+12 this week",
-    trend: "up" as const,
+    label: "Products Tracked",
+    value: "48",
+    change: "+6 this week",
+    trend: "up" as Trend,
     icon: BarChart2,
   },
   {
-    label: "Trending Now",
-    value: "18",
-    change: "+5 since yesterday",
-    trend: "up" as const,
+    label: "Hot Opportunities",
+    value: "12",
+    change: "+3 since yesterday",
+    trend: "up" as Trend,
     icon: TrendingUp,
   },
   {
-    label: "Market Score",
-    value: "8.4",
-    change: "0.2 from last week",
-    trend: "neutral" as const,
+    label: "Avg. Demand Score",
+    value: "74",
+    change: "±2 from last week",
+    trend: "neutral" as Trend,
     icon: Target,
   },
   {
-    label: "Profile Matches",
-    value: "34",
-    change: "-3 this week",
-    trend: "down" as const,
-    icon: Zap,
+    label: "Experts in Demand",
+    value: "1.8k",
+    change: "+230 this month",
+    trend: "up" as Trend,
+    icon: Users,
   },
 ]
 
-const TRENDING_SKILLS: Array<{
-  skill: string
-  demand: number
-  trend: "up" | "down" | "neutral"
+// ─── Rising products table (free) ─────────────────────────────────────────────
+
+const CATEGORY_ICONS: Record<string, React.ElementType> = {
+  "No-Code": Layers,
+  "AI Builder": Sparkles,
+  Design: Palette,
+  "Dev Tools": Code2,
+  Productivity: BookOpen,
+  Automation: Zap,
+}
+
+const RISING_PRODUCTS: Array<{
+  name: string
+  score: number
+  trend: Trend
   category: string
-  icon: React.ElementType
 }> = [
-  { skill: "AI Prompt Engineering", demand: 94, trend: "up", category: "AI/ML", icon: Code2 },
-  { skill: "Next.js Development", demand: 88, trend: "up", category: "Web Dev", icon: Globe },
-  { skill: "Product Design (Figma)", demand: 82, trend: "up", category: "Design", icon: Palette },
-  { skill: "Data Analysis", demand: 77, trend: "neutral", category: "Data", icon: Database },
-  { skill: "Copywriting", demand: 71, trend: "up", category: "Content", icon: PenTool },
-  { skill: "Brand Strategy", demand: 65, trend: "down", category: "Marketing", icon: Briefcase },
-  { skill: "React Native", demand: 63, trend: "up", category: "Mobile", icon: Code2 },
-  { skill: "SEO Optimization", demand: 58, trend: "neutral", category: "Marketing", icon: Globe },
+  { name: "Framer", score: 92, trend: "up", category: "No-Code" },
+  { name: "Lovable", score: 88, trend: "up", category: "AI Builder" },
+  { name: "Webflow", score: 84, trend: "up", category: "No-Code" },
+  { name: "Figma", score: 81, trend: "neutral", category: "Design" },
+  { name: "v0 by Vercel", score: 76, trend: "up", category: "AI Builder" },
+  { name: "Notion", score: 72, trend: "neutral", category: "Productivity" },
+  { name: "Cursor", score: 69, trend: "up", category: "Dev Tools" },
+  { name: "Supabase", score: 65, trend: "up", category: "Dev Tools" },
+  { name: "Bubble", score: 61, trend: "down", category: "No-Code" },
+  { name: "Zapier", score: 58, trend: "neutral", category: "Automation" },
 ]
+
+// ─── Hiring insights (pro) ────────────────────────────────────────────────────
+
+// Demo/mock data — replace with real API values when analytics service is available
+const HIRING_INSIGHTS: Array<{
+  name: string
+  openRoles: number
+  avgRate: string
+  competition: string
+  growth: string
+  trend: Trend
+}> = [
+  { name: "Framer", openRoles: 43, avgRate: "$85/hr", competition: "Low", growth: "+28%", trend: "up" },
+  { name: "Lovable", openRoles: 31, avgRate: "$90/hr", competition: "Very Low", growth: "+41%", trend: "up" },
+  { name: "v0 by Vercel", openRoles: 24, avgRate: "$95/hr", competition: "Very Low", growth: "+65%", trend: "up" },
+  { name: "Webflow", openRoles: 87, avgRate: "$75/hr", competition: "Medium", growth: "+18%", trend: "up" },
+  { name: "Cursor", openRoles: 28, avgRate: "$100/hr", competition: "Low", growth: "+34%", trend: "up" },
+  { name: "Figma", openRoles: 112, avgRate: "$80/hr", competition: "High", growth: "+8%", trend: "neutral" },
+  { name: "Supabase", openRoles: 19, avgRate: "$88/hr", competition: "Low", growth: "+29%", trend: "up" },
+  { name: "Bubble", openRoles: 34, avgRate: "$70/hr", competition: "Medium", growth: "-9%", trend: "down" },
+]
+
+const COMPETITION_COLOR: Record<string, string> = {
+  "Very Low": "bg-green-500/10 text-green-700 border-green-200",
+  Low: "bg-emerald-500/10 text-emerald-700 border-emerald-200",
+  Medium: "bg-yellow-500/10 text-yellow-700 border-yellow-200",
+  High: "bg-red-500/10 text-red-600 border-red-200",
+}
+
+// ─── Market signals (free) ────────────────────────────────────────────────────
 
 const SIGNALS = [
   {
-    title: "AI/ML skills surged 34% this week",
-    detail: "Demand for AI Prompt Engineering and LLM fine-tuning reached an all-time high.",
-    time: "2h ago",
+    title: "Lovable expertise in high demand",
+    detail: "AI app builder requests grew 41% — 210 new hire posts this month with very few specialists available.",
+    time: "3h ago",
     type: "spike",
   },
   {
-    title: "New category added: Blockchain",
-    detail: "Smart contract development is gaining traction among Contra clients.",
-    time: "5h ago",
+    title: "Framer overtaking Webflow in no-code",
+    detail: "Framer postings up 28% as brands shift to interactive micro-sites. Avg rate holding at $85/hr.",
+    time: "8h ago",
+    type: "spike",
+  },
+  {
+    title: "v0 by Vercel — early-mover advantage",
+    detail: "Only 145 v0 specialists on Contra. Clients are paying $95+ for experts who can ship fast.",
+    time: "1d ago",
     type: "new",
   },
   {
-    title: "Figma demand stabilizing",
-    detail: "Product design requests leveled off after a two-week growth streak.",
-    time: "1d ago",
-    type: "neutral",
-  },
-  {
-    title: "Copywriting dipped slightly",
-    detail: "General copywriting requests down 8% — long-form and SEO copy still strong.",
+    title: "Bubble demand cooling slightly",
+    detail: "No-code app requests dipped 9% this week. Zapier automation work partially absorbing the gap.",
     time: "1d ago",
     type: "drop",
   },
   {
-    title: "Next.js remains top web skill",
-    detail: "React/Next.js continues to dominate front-end client requests on Contra.",
+    title: "Figma demand remains steady",
+    detail: "Design team subscriptions signal sustained Figma hiring through Q3 — 112 open roles on Contra.",
     time: "2d ago",
     type: "steady",
   },
@@ -106,20 +154,28 @@ const SIGNALS = [
 const SIGNAL_COLORS: Record<string, string> = {
   spike: "bg-green-500/10 text-green-600 border-green-200",
   new: "bg-blue-500/10 text-blue-600 border-blue-200",
-  neutral: "bg-muted text-muted-foreground border-border",
   drop: "bg-red-500/10 text-red-600 border-red-200",
   steady: "bg-yellow-500/10 text-yellow-700 border-yellow-200",
 }
 
 const SIGNAL_LABELS: Record<string, string> = {
-  spike: "Spike",
+  spike: "Hot",
   new: "New",
-  neutral: "Flat",
   drop: "Drop",
   steady: "Steady",
 }
 
-function TrendIcon({ trend }: { trend: "up" | "down" | "neutral" }) {
+// ─── Opportunity score (pro) ──────────────────────────────────────────────────
+
+const OPPORTUNITY_TIPS = [
+  "Add Framer to your profile — 43 open roles, low competition",
+  "List Lovable or v0 to stand out: early specialists earn 20% more",
+  "Highlight no-code projects — Webflow clients are hiring this week",
+]
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function TrendIcon({ trend }: { trend: Trend }) {
   if (trend === "up") return <ArrowUpRight className="w-4 h-4 text-green-500" />
   if (trend === "down") return <ArrowDownRight className="w-4 h-4 text-red-500" />
   return <Minus className="w-4 h-4 text-muted-foreground" />
@@ -129,15 +185,14 @@ function DemandBar({ value }: { value: number }) {
   return (
     <div className="flex items-center gap-2">
       <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
-        <div
-          className="h-full bg-primary rounded-full"
-          style={{ width: `${value}%` }}
-        />
+        <div className="h-full bg-primary rounded-full" style={{ width: `${value}%` }} />
       </div>
       <span className="text-xs tabular-nums text-muted-foreground w-6 text-right">{value}</span>
     </div>
   )
 }
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
   const { user } = useUser()
@@ -152,7 +207,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Stats row */}
+      {/* Stats row — all free */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {STATS.map((stat) => {
           const Icon = stat.icon
@@ -176,143 +231,140 @@ export default function DashboardPage() {
         })}
       </div>
 
-      {/* Main content */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Trending Skills Table — pro feature */}
-        <FeatureGate requiredTier="pro">
-          <div className="lg:col-span-3">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Trending Skills</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-1">
-                  <div className="grid grid-cols-[1fr_auto_80px_auto] gap-4 pb-2 border-b text-xs font-medium text-muted-foreground">
-                    <span>Skill</span>
-                    <span>Category</span>
-                    <span>Demand</span>
-                    <span className="text-right">Trend</span>
-                  </div>
-                  {TRENDING_SKILLS.map((item) => {
-                    const Icon = item.icon
-                    return (
-                      <div
-                        key={item.skill}
-                        className="grid grid-cols-[1fr_auto_80px_auto] gap-4 items-center py-2.5 border-b last:border-0"
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <div className="w-7 h-7 rounded-md bg-muted flex items-center justify-center shrink-0">
-                            <Icon className="w-3.5 h-3.5 text-muted-foreground" />
-                          </div>
-                          <span className="text-sm font-medium truncate">{item.skill}</span>
-                        </div>
-                        <Badge variant="outline" className="text-xs shrink-0">
-                          {item.category}
-                        </Badge>
-                        <DemandBar value={item.demand} />
-                        <TrendIcon trend={item.trend} />
+      {/* Row 2: Rising Products (free) + Hiring Insights (pro) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Rising Products — free */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Rising Products on Contra</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              <div className="grid grid-cols-[1fr_auto_72px_auto] gap-3 pb-2 border-b text-xs font-medium text-muted-foreground">
+                <span>Product</span>
+                <span>Category</span>
+                <span>Demand</span>
+                <span />
+              </div>
+              {RISING_PRODUCTS.map((item) => {
+                const Icon = CATEGORY_ICONS[item.category] ?? Layers
+                return (
+                  <div
+                    key={item.name}
+                    className="grid grid-cols-[1fr_auto_72px_auto] gap-3 items-center py-2 border-b last:border-0"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="w-7 h-7 rounded-md bg-muted flex items-center justify-center shrink-0">
+                        <Icon className="w-3.5 h-3.5 text-muted-foreground" />
                       </div>
-                    )
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </FeatureGate>
+                      <span className="text-sm font-medium truncate">{item.name}</span>
+                    </div>
+                    <Badge variant="outline" className="text-xs shrink-0">
+                      {item.category}
+                    </Badge>
+                    <DemandBar value={item.score} />
+                    <TrendIcon trend={item.trend} />
+                  </div>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Market Signals feed */}
-        <div className="lg:col-span-2">
+        {/* Hiring Insights — pro */}
+        <FeatureGate requiredTier="pro">
           <Card className="h-full">
             <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                Market Signals
-              </CardTitle>
+              <CardTitle className="text-base">Hiring Insights</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {SIGNALS.map((signal) => (
-                  <div key={signal.title} className="space-y-1">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-medium leading-snug">{signal.title}</p>
-                      <Badge
-                        variant="outline"
-                        className={`text-xs shrink-0 ${SIGNAL_COLORS[signal.type]}`}
-                      >
-                        {SIGNAL_LABELS[signal.type]}
-                      </Badge>
+              <div className="space-y-1">
+                <div className="grid grid-cols-[1fr_auto_auto_auto] gap-3 pb-2 border-b text-xs font-medium text-muted-foreground">
+                  <span>Product</span>
+                  <span>Open Roles</span>
+                  <span>Avg. Rate</span>
+                  <span>Competition</span>
+                </div>
+                {HIRING_INSIGHTS.map((item) => (
+                  <div
+                    key={item.name}
+                    className="grid grid-cols-[1fr_auto_auto_auto] gap-3 items-center py-2 border-b last:border-0"
+                  >
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <TrendIcon trend={item.trend} />
+                      <span className="text-sm font-medium truncate">{item.name}</span>
+                      <span className="text-xs text-green-600 font-medium ml-1">{item.growth}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">{signal.detail}</p>
-                    <p className="text-xs text-muted-foreground/60">{signal.time}</p>
+                    <span className="text-sm tabular-nums font-medium">{item.openRoles}</span>
+                    <span className="text-sm tabular-nums text-muted-foreground">{item.avgRate}</span>
+                    <Badge
+                      variant="outline"
+                      className={`text-xs shrink-0 ${COMPETITION_COLOR[item.competition]}`}
+                    >
+                      {item.competition}
+                    </Badge>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
-        </div>
+        </FeatureGate>
       </div>
 
-      {/* Bottom row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Top categories */}
+      {/* Row 3: Market Signals (free) + Opportunity Score (pro) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Market Signals — free */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Top Categories This Week</CardTitle>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              Market Signals
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {[
-                { name: "AI / Machine Learning", share: 28 },
-                { name: "Web Development", share: 22 },
-                { name: "Design & UX", share: 17 },
-                { name: "Content & Copy", share: 13 },
-                { name: "Data & Analytics", share: 11 },
-                { name: "Other", share: 9 },
-              ].map((cat) => (
-                <div key={cat.name} className="space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <span className="font-medium">{cat.name}</span>
-                    <span className="text-muted-foreground">{cat.share}%</span>
+            <div className="space-y-4">
+              {SIGNALS.map((signal) => (
+                <div key={signal.title} className="space-y-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="text-sm font-medium leading-snug">{signal.title}</p>
+                    <Badge
+                      variant="outline"
+                      className={`text-xs shrink-0 ${SIGNAL_COLORS[signal.type]}`}
+                    >
+                      {SIGNAL_LABELS[signal.type]}
+                    </Badge>
                   </div>
-                  <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary/70 rounded-full"
-                      style={{ width: `${cat.share}%` }}
-                    />
-                  </div>
+                  <p className="text-xs text-muted-foreground">{signal.detail}</p>
+                  <p className="text-xs text-muted-foreground/60">{signal.time}</p>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Quick actions / tips */}
+        {/* Opportunity Score — pro */}
         <FeatureGate requiredTier="pro">
-          <Card>
+          <Card className="h-full">
             <CardHeader>
               <CardTitle className="text-base">Your Opportunity Score</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-primary">8.4</span>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <span className="text-2xl font-bold text-primary">7.8</span>
                 </div>
                 <div>
                   <p className="text-sm font-medium">Strong Match</p>
                   <p className="text-xs text-muted-foreground">
-                    Your profile aligns with 34 active demand signals this week.
+                    Your profile aligns with 12 active hiring opportunities on Contra right now.
                   </p>
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  Suggested actions
+                  Recommended next steps
                 </p>
-                {[
-                  "Add AI Prompt Engineering to your profile",
-                  "Highlight Next.js projects in your portfolio",
-                  "Update your Data Analysis availability",
-                ].map((tip) => (
+                {OPPORTUNITY_TIPS.map((tip) => (
                   <div key={tip} className="flex items-start gap-2 text-sm">
                     <ArrowUpRight className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
                     <span>{tip}</span>
