@@ -1,6 +1,7 @@
 "use client";
 
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import { useSubscription } from "@/hooks/useSubscription";
 import { UpgradeModal } from "./UpgradeModal";
 import { useState } from "react";
 import type { SubscriptionTier } from "@/types";
@@ -13,10 +14,10 @@ interface FeatureGateProps {
 
 export function FeatureGate({ requiredTier = "lite", children, fallback }: FeatureGateProps) {
   const { hasAccess } = useFeatureAccess(requiredTier);
+  const { tier } = useSubscription();
   const [showUpgrade, setShowUpgrade] = useState(false);
-  const [isDemoUnlocked, setIsDemoUnlocked] = useState(false);
 
-  if (hasAccess || isDemoUnlocked) {
+  if (hasAccess) {
     return <>{children}</>;
   }
 
@@ -45,11 +46,7 @@ export function FeatureGate({ requiredTier = "lite", children, fallback }: Featu
       <UpgradeModal
         isOpen={showUpgrade}
         onClose={() => setShowUpgrade(false)}
-        requiredPlan={requiredTier === "pro" ? "Pro" : "Lite"}
-        onViewPlans={() => {
-          setShowUpgrade(false);
-          setIsDemoUnlocked(true);
-        }}
+        currentTier={tier}
       />
     </>
   );

@@ -1,12 +1,15 @@
 "use client"
 
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useSubscription } from "@/hooks/useSubscription"
 import { PlanBadge } from "@/components/shared/PlanBadge"
+import { UpgradeModal } from "@/components/shared/UpgradeModal"
 
 export default function BillingPage() {
   const { tier, status, isPaid } = useSubscription()
+  const [upgradeOpen, setUpgradeOpen] = useState(false)
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -38,7 +41,7 @@ export default function BillingPage() {
                   Manage in PayPal
                 </Button>
               ) : (
-                <Button>Upgrade Plan</Button>
+                <Button onClick={() => setUpgradeOpen(true)}>Upgrade Plan</Button>
               )}
             </div>
           </div>
@@ -75,6 +78,12 @@ export default function BillingPage() {
           </CardContent>
         </Card>
       )}
+
+      <UpgradeModal
+        isOpen={upgradeOpen}
+        onClose={() => setUpgradeOpen(false)}
+        currentTier={tier}
+      />
     </div>
   )
 }
