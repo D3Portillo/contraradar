@@ -47,7 +47,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
+        <div className="border-t mt-32 pt-16 text-center text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Contraradar. All rights reserved.</p>
         </div>
       </div>
