@@ -11,7 +11,7 @@ export function Hero() {
     <section className="mt-56 px-4">
       <div className="container mx-auto text-center max-w-4xl">
         <h1 className="text-5xl md:text-6xl font-bold mb-6 text-foreground">
-          Build Better Products with Contraradar
+          Radar — market intelligence for Contra experts.
         </h1>
         <p className="text-xl text-muted-foreground mb-8">
           Professional tools for modern teams. Simple pricing, powerful
