@@ -176,9 +176,6 @@ npm run start        # Start production server
 
 ### Protected (Requires Auth)
 - `POST /api/checkout` - Create checkout session
-- `GET /api/subscription` - Get subscription status
-- `POST /api/subscription/cancel` - Cancel subscription
-- `GET /api/customer-portal` - Get customer portal URL
 
 ## Environment Variables
 

@@ -182,20 +182,7 @@ Update webhook URL to: `https://your-ngrok-url.ngrok.io/api/webhooks/paypal`
 
 ## Customer Management
 
-Users manage subscriptions via PayPal dashboard:
-```typescript
-const res = await fetch('/api/customer-portal');
-const { url } = await res.json();
-window.location.href = url;
-```
-
-## Cancel Subscription
-
-```typescript
-const res = await fetch('/api/subscription/cancel', {
-  method: 'POST',
-});
-```
+Users manage subscriptions directly in their PayPal account dashboard.
 
 ## Pricing Structure
 

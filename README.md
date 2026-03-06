@@ -16,7 +16,6 @@ Professional SaaS platform with subscription tiers.
 - ✅ Subscription tiers (Free, Lite, Pro)
 - ✅ User authentication
 - ✅ Payment processing
-- ✅ Customer portal
 - ✅ Webhook handlers
 - ✅ Redis caching
 - ✅ Responsive design

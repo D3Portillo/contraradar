@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useUser } from "@clerk/nextjs"
 import { useClerk } from "@clerk/nextjs"
+import { cn } from "@/lib/utils"
 
 const plans = [
   {
@@ -91,17 +92,19 @@ export default function PricingPage() {
             <div className="inline-flex p-1 border border-black/20 rounded-full overflow-hidden">
               <button
                 onClick={() => setBillingCycle("monthly")}
-                className={`px-4 py-2 rounded-full text-sm ${
-                  billingCycle === "monthly" ? "bg-primary text-white" : ""
-                }`}
+                className={cn(
+                  "px-4 py-2 rounded-full text-sm",
+                  billingCycle === "monthly" && "bg-primary text-white",
+                )}
               >
                 Monthly
               </button>
               <button
                 onClick={() => setBillingCycle("yearly")}
-                className={`px-4 py-2 rounded-full text-sm ${
-                  billingCycle === "yearly" ? "bg-primary text-white" : ""
-                }`}
+                className={cn(
+                  "px-4 py-2 rounded-full text-sm",
+                  billingCycle === "yearly" && "bg-primary text-white",
+                )}
               >
                 Yearly (2 months free)
               </button>
@@ -112,9 +115,10 @@ export default function PricingPage() {
             {plans.map((plan) => (
               <Card
                 key={plan.tier}
-                className={`relative ${
-                  plan.highlighted ? "border-primary shadow-lg" : ""
-                }`}
+                className={cn(
+                  "relative",
+                  plan.highlighted && "border-primary shadow-lg",
+                )}
               >
                 {plan.highlighted && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">

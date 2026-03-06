@@ -1,29 +1,12 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useSubscription } from "@/hooks/useSubscription";
-import { PlanBadge } from "@/components/shared/PlanBadge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { useSubscription } from "@/hooks/useSubscription"
+import { PlanBadge } from "@/components/shared/PlanBadge"
 
 export default function BillingPage() {
-  const { tier, status, isPaid } = useSubscription();
-  const [loading, setLoading] = useState(false);
-
-  const handleManageSubscription = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/customer-portal");
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { tier, status, isPaid } = useSubscription()
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -47,14 +30,12 @@ export default function BillingPage() {
                 </h3>
                 <PlanBadge tier={tier} />
               </div>
-              <p className="text-sm text-muted-foreground">
-                Status: {status}
-              </p>
+              <p className="text-sm text-muted-foreground">Status: {status}</p>
             </div>
             <div className="text-right">
               {isPaid ? (
-                <Button onClick={handleManageSubscription} disabled={loading}>
-                  {loading ? "Loading..." : "Manage Subscription"}
+                <Button disabled>
+                  Manage in PayPal
                 </Button>
               ) : (
                 <Button>Upgrade Plan</Button>
@@ -80,7 +61,7 @@ export default function BillingPage() {
                     <p className="text-sm font-medium">
                       {tier.charAt(0).toUpperCase() + tier.slice(1)} Plan -{" "}
                       {new Date(
-                        Date.now() - i * 30 * 24 * 60 * 60 * 1000
+                        Date.now() - i * 30 * 24 * 60 * 60 * 1000,
                       ).toLocaleDateString()}
                     </p>
                     <p className="text-xs text-muted-foreground">Paid</p>
@@ -94,22 +75,6 @@ export default function BillingPage() {
           </CardContent>
         </Card>
       )}
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Payment Method</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
-            Manage your payment methods through the customer portal.
-          </p>
-          {isPaid && (
-            <Button variant="outline" onClick={handleManageSubscription}>
-              Update Payment Method
-            </Button>
-          )}
-        </CardContent>
-      </Card>
     </div>
-  );
+  )
 }

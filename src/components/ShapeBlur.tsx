@@ -1,6 +1,7 @@
 import { useRef, useEffect, FC } from "react"
 // @ts-ignore
 import * as THREE from "three"
+import { cn } from "@/lib/utils"
 
 const vertexShader = /* glsl */ `
 varying vec2 v_texcoord;
@@ -290,7 +291,7 @@ const ShapeBlur: FC<ShapeBlurProps> = ({
     circleEdge,
   ])
 
-  return <div ref={mountRef} className={`w-full h-full ${className}`} />
+  return <div ref={mountRef} className={cn("size-full", className)} />
 }
 
 export default ShapeBlur
