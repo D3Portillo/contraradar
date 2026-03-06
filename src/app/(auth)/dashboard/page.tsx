@@ -240,9 +240,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-1">
-              <div className="grid grid-cols-[1fr_auto_72px_auto] gap-3 pb-2 border-b text-xs font-medium text-muted-foreground">
+              <div className="grid grid-cols-[1fr_72px_auto] sm:grid-cols-[1fr_auto_72px_auto] gap-3 pb-2 border-b text-xs font-medium text-muted-foreground">
                 <span>Product</span>
-                <span>Category</span>
+                <span className="hidden sm:block">Category</span>
                 <span>Demand</span>
                 <span />
               </div>
@@ -251,7 +251,7 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={item.name}
-                    className="grid grid-cols-[1fr_auto_72px_auto] gap-3 items-center py-2 border-b last:border-0"
+                    className="grid grid-cols-[1fr_72px_auto] sm:grid-cols-[1fr_auto_72px_auto] gap-3 items-center py-2 border-b last:border-0"
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <div className="w-7 h-7 rounded-md bg-muted flex items-center justify-center shrink-0">
@@ -259,7 +259,7 @@ export default function DashboardPage() {
                       </div>
                       <span className="text-sm font-medium truncate">{item.name}</span>
                     </div>
-                    <Badge variant="outline" className="text-xs shrink-0">
+                    <Badge variant="outline" className="text-xs shrink-0 hidden sm:inline-flex">
                       {item.category}
                     </Badge>
                     <DemandBar value={item.score} />
