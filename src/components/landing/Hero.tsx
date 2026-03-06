@@ -10,7 +10,7 @@ export function Hero() {
   const { isSignedIn } = useUser()
 
   return (
-    <section className="mt-56 px-4">
+    <section className="mt-56 select-none px-4">
       <figure className="absolute top-0 left-0 right-0 h-screen pointer-events-none opacity-35">
         <ShapeBlur color="red" variation={3} circleSize={0.5} circleEdge={1} />
       </figure>

@@ -2,11 +2,15 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+
 import { cn } from "@/lib/utils"
 import { useSubscription } from "@/hooks/useSubscription"
 import { PlanBadge } from "@/components/shared/PlanBadge"
 
-const navigation = [
+import asset_icon from "@/assets/icon.svg"
+import Image from "next/image"
+
+const NAVIGATION = [
   { name: "Dashboard", href: "/dashboard" },
   { name: "Settings", href: "/dashboard/settings" },
   { name: "Billing", href: "/dashboard/billing" },
@@ -18,20 +22,26 @@ export function Sidebar() {
 
   return (
     <div className="w-64 bg-card border-r min-h-screen p-4">
-      <div className="mb-8">
-        <h2 className="text-xl font-bold">♢ RADAR</h2>
+      <div className="mb-8 select-none">
+        <nav className="flex gap-1 items-center">
+          <Link title="Go to main page" href="/" className="w-6">
+            <Image alt="" src={asset_icon} />
+          </Link>
+
+          <h2 className="text-xl font-bold">RADAR</h2>
+        </nav>
         <div className="mt-2">
           <PlanBadge tier={tier} />
         </div>
       </div>
 
-      <nav>
-        {navigation.map((item) => (
+      <nav className="-mx-4">
+        {NAVIGATION.map((item) => (
           <Link
-            key={item.name}
+            key={`nav-item-${item.href}`}
             href={item.href}
             className={cn(
-              "block px-4 py-2 rounded-md text-sm font-medium transition-colors",
+              "block px-4 py-3 rounded-md text-sm font-medium transition-colors",
               pathname === item.href
                 ? "bg-primary text-primary-foreground"
                 : "hover:bg-muted",
