@@ -103,12 +103,6 @@ export function UpgradeModal({
             </div>
           ))}
         </div>
-
-        <div className="flex justify-end">
-          <Button variant="ghost" onClick={onClose}>
-            Maybe Later
-          </Button>
-        </div>
       </DialogContent>
     </Dialog>
   );
